@@ -44,10 +44,10 @@ const Header = async () => {
 
             <div className="flex flex-col">
               <span className="block text-lg font-semibold bg-gradient-to-r from-blue-400 via-blue-300 to-purple-400 text-transparent bg-clip-text">
-                CodeCraft
+                온라인 코드 러너
               </span>
               <span className="block text-xs text-blue-400/60 font-medium">
-                Interactive Code Editor
+                웹사이트에서 코드를 작성하고 실행하세요
               </span>
             </div>
           </Link>
