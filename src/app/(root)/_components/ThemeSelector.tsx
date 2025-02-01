@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import useMounted from '@/hooks/useMounted'
 
+// 테마 아이콘 정의
 const THEME_ICONS: Record<string, React.ReactNode> = {
   'vs-dark': <Moon className="size-4" />,
   'vs-light': <Sun className="size-4" />,
@@ -55,7 +56,7 @@ function ThemeSelector() {
         className="w-48 group relative flex items-center gap-2 px-4 py-2.5 bg-[#1e1e2e]/80 hover:bg-[#262637] 
         rounded-lg transition-all duration-200 border border-gray-800/50 hover:border-gray-700"
       >
-        {/* hover state bg decorator */}
+        {/* hover 상태 배경 데코레이터 */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
 
         <Palette className="w-4 h-4 text-gray-400 group-hover:text-gray-300 transition-colors" />
@@ -64,8 +65,7 @@ function ThemeSelector() {
           {currentTheme?.label}
         </span>
 
-        {/* color indicator */}
-
+        {/* 색상 표시기 */}
         <div
           className="relative w-4 h-4 rounded-full border border-gray-600 group-hover:border-gray-500 transition-colors"
           style={{ background: currentTheme?.color }}
@@ -84,7 +84,7 @@ function ThemeSelector() {
           >
             <div className="px-2 pb-2 mb-2 border-b border-gray-800/50">
               <p className="text-xs font-medium text-gray-400 px-2">
-                Select Theme
+                테마 선택
               </p>
             </div>
 
@@ -102,15 +102,18 @@ function ThemeSelector() {
                     : 'text-gray-300'
                 }
               `}
-                onClick={() => setTheme(t.id)}
+                onClick={() => {
+                  setTheme(t.id)
+                  setIsOpen(false) // 테마 클릭 시 드롭다운 닫기
+                }}
               >
-                {/* bg gradient */}
+                {/* 배경 그라데이션 */}
                 <div
                   className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 
               group-hover:opacity-100 transition-opacity"
                 />
 
-                {/* icon */}
+                {/* 아이콘 */}
                 <div
                   className={`
                 flex items-center justify-center size-8 rounded-lg
@@ -124,19 +127,19 @@ function ThemeSelector() {
                 >
                   {THEME_ICONS[t.id] || <CircleOff className="w-4 h-4" />}
                 </div>
-                {/* label */}
+                {/* 라벨 */}
                 <span className="flex-1 text-left group-hover:text-white transition-colors">
                   {t.label}
                 </span>
 
-                {/* color indicator */}
+                {/* 색상 표시기 */}
                 <div
                   className="relative size-4 rounded-full border border-gray-600 
                 group-hover:border-gray-500 transition-colors"
                   style={{ background: t.color }}
                 />
 
-                {/* active theme border */}
+                {/* 활성 테마 테두리 */}
                 {theme === t.id && (
                   <motion.div
                     className="absolute inset-0 border-2 border-blue-500/30 rounded-lg"

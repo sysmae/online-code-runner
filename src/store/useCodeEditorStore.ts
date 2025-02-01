@@ -1,11 +1,11 @@
 import { CodeEditorState } from './../types/index'
 import { LANGUAGE_CONFIG } from '@/app/(root)/_constants'
 import { create } from 'zustand'
-// import { Monaco } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
 
+// 초기 상태를 반환하는 함수
 const getInitialState = () => {
-  // if we're on the server, return default values
+  // 서버라면 기본 값을 반환
   if (typeof window === 'undefined') {
     return {
       language: 'javascript',
@@ -14,7 +14,7 @@ const getInitialState = () => {
     }
   }
 
-  // if we're on the client, return values from local storage bc localStorage is a browser API.
+  // 클라이언트라면 로컬 스토리지에서 값을 가져옴
   const savedLanguage = localStorage.getItem('editor-language') || 'javascript'
   const savedTheme = localStorage.getItem('editor-theme') || 'vs-dark'
   const savedFontSize = localStorage.getItem('editor-font-size') || 16
@@ -26,6 +26,7 @@ const getInitialState = () => {
   }
 }
 
+// zustand를 사용하여 상태 생성
 export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
   const initialState = getInitialState()
 
@@ -37,8 +38,10 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
     editor: null,
     executionResult: null,
 
+    // 에디터의 코드를 가져오는 함수
     getCode: () => get().editor?.getValue() || '',
 
+    // 에디터를 설정하는 함수
     setEditor: (editor: monaco.editor.IStandaloneCodeEditor) => {
       const savedCode = localStorage.getItem(`editor-code-${get().language}`)
       if (savedCode) editor.setValue(savedCode)
@@ -46,18 +49,21 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       set({ editor })
     },
 
+    // 테마를 설정하는 함수
     setTheme: (theme: string) => {
       localStorage.setItem('editor-theme', theme)
       set({ theme })
     },
 
+    // 폰트 크기를 설정하는 함수
     setFontSize: (fontSize: number) => {
       localStorage.setItem('editor-font-size', fontSize.toString())
       set({ fontSize })
     },
 
+    // 언어를 설정하는 함수
     setLanguage: (language: string) => {
-      // Save current language code before switching
+      // 언어를 변경하기 전에 현재 언어의 코드를 저장
       const currentCode = get().editor?.getValue()
       if (currentCode) {
         localStorage.setItem(`editor-code-${get().language}`, currentCode)
@@ -72,12 +78,13 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
       })
     },
 
+    // 코드를 실행하는 함수
     runCode: async () => {
       const { language, getCode } = get()
       const code = getCode()
 
       if (!code) {
-        set({ error: 'Please enter some code' })
+        set({ error: '코드를 입력하세요' })
         return
       }
 
@@ -99,9 +106,9 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
 
         const data = await response.json()
 
-        console.log('data back from piston:', data)
+        console.log('piston에서 받은 데이터:', data)
 
-        // handle API-level erros
+        // API 수준의 오류 처리
         if (data.message) {
           set({
             error: data.message,
@@ -110,7 +117,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
           return
         }
 
-        // handle compilation errors
+        // 컴파일 오류 처리
         if (data.compile && data.compile.code !== 0) {
           const error = data.compile.stderr || data.compile.output
           set({
@@ -124,6 +131,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
           return
         }
 
+        // 실행 오류 처리
         if (data.run && data.run.code !== 0) {
           const error = data.run.stderr || data.run.output
           set({
@@ -137,7 +145,7 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
           return
         }
 
-        // if we get here, execution was successful
+        // 실행이 성공적일 경우
         const output = data.run.output
 
         set({
@@ -150,10 +158,14 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
           },
         })
       } catch (error) {
-        console.log('Error running code:', error)
+        console.log('코드 실행 중 오류 발생:', error)
         set({
-          error: 'Error running code',
-          executionResult: { code, output: '', error: 'Error running code' },
+          error: '코드 실행 중 오류 발생',
+          executionResult: {
+            code,
+            output: '',
+            error: '코드 실행 중 오류 발생',
+          },
         })
       } finally {
         set({ isRunning: false })
@@ -162,5 +174,6 @@ export const useCodeEditorStore = create<CodeEditorState>((set, get) => {
   }
 })
 
+// 실행 결과를 가져오는 함수
 export const getExecutionResult = () =>
   useCodeEditorStore.getState().executionResult
