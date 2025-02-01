@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.10.4",
+    "@clerk/types": "^4.45.0",
     "@monaco-editor/react": "^4.6.0",
     "convex": "^1.18.2",
     "framer-motion": "^12.0.6",
@@ -27,6 +28,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
